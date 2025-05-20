@@ -1,0 +1,45 @@
+Version: 1.4.0
+	Skin 'default' is updated to the version 1.2.
+
+Version: 1.3.0
+    Removed:
+        - Disabling of rendering replacement in the Post Featured Image block for FSE themes (works only for video, audio, and gallery formats now)
+    Fixed:
+        - Sticky sidebar positioning script on fullwidth pages, when fixed_blocks_sticky == false selected in the options
+        - Syntax in the function of the URL replacement for Vimeo videos
+
+Version: 1.2.0
+    Added:
+        - Option "Redirect 404"
+        - Option "Disable word hyphenation for the headings on tablets and mobile devices"
+        - Parameter "Show Description" in Layouts - Title shortcode
+        - Layouts: filter 'trx_addons_filter_sc_layout_content_need_inline_css' for custom layouts
+        - Elementor: default settings for compatibility with Elementor "Optimize Control Loading"
+        - Options for customization of shortcodes Switcher and HotSpot
+        - Slider Widget: responsiveness for "Slides per view" and "Slides space" parameters
+        - AI Helper: API support for ModelsLab music generation
+        - AI Helper: Text To Speech/Speech To Text/Voice Covering API from OpenAI and ModelsLab and a new widget Audio Generator (AGenerator)
+        - AI Helper IGenerator: script for repeated opening of images
+        - AI Helper: authorization parameters for Open AI and Google AI APIs to use proxy servers
+        - API Text To Speech / Speech To Text /
+        - Elementor Page Settings: a filter to disable a default section background for layouts
+    Fixed:
+        - Mouse Animation styles
+        - Revolution Slider: demo url to support a new version of slider tables
+        - FontAwesome 4 compatibility
+        - "NavMenu" script for layout submenus
+        - PHP8 Compatibility for CPT Services
+        - Iframe resize of fullscreen video
+        - Elementor 3.25.0+ compatibility
+        - AI Helper Chat: title and button styles
+        - API Stable Diffusion renamed to ModelLab
+        - xxx_get_file_dir() for file compilation in /uploads on multisite installations
+        - Rendering of Instagram video posts
+        - Woocommerce: styles of product discounts
+    Updated:
+        - QW Extension addon (to version 1.6.0)
+
+Version: 1.1.0
+	Skin 'default' is updated to the version 1.1.
+
+Release: v.1.0.0 (2.29.0)
