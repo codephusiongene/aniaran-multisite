@@ -459,11 +459,6 @@ if ( ! function_exists( 'trx_addons_wpml_elementor_widgets_to_translate' ) ) {
 					'type'        => sprintf( __( '%s: Description', 'trx_addons' ), $sc ),
 					'editor_type' => 'VISUAL'
 				),
-				'link' => array(
-					'field'       => 'url',
-					'type'        => sprintf( __( '%s: Link', 'trx_addons' ), $sc ),
-					'editor_type' => 'LINK'
-				),
 			),
 			'integration-class' => 'WPML_Elementor_Trx_Elm_Team_Member',
 		);
@@ -934,29 +929,6 @@ if ( ! function_exists( 'trx_addons_wpml_elementor_widgets_to_translate' ) ) {
 			'integration-class' => 'WPML_Elementor_Trx_Sc_Supertitle',
 		);
 
-		// Shortcode 'Switcher'
-		$sc = __( 'Switcher', 'trx_addons' );
-		$nodes['trx_sc_switcher'] = array(
-			'conditions' => array( 'widgetType' => 'trx_sc_switcher' ),
-			'fields'     => array_merge(
-								// Common params
-								trx_addons_wpml_elementor_get_title_params( $sc ),
-								// Shortcode-specific params
-								array(
-									array(
-										'field'       => 'slide1_title',
-										'type'        => sprintf( __( '%s: Slide 1 title', 'trx_addons' ), $sc ),
-										'editor_type' => 'LINE'
-									),
-									array(
-										'field'       => 'slide2_title',
-										'type'        => sprintf( __( '%s: Slide 2 title', 'trx_addons' ), $sc ),
-										'editor_type' => 'LINE'
-									),
-								)
-							),
-		);
-
 		// Shortcode 'Table'
 		$sc = __( 'Table', 'trx_addons' );
 		$nodes['trx_sc_table'] = array(
@@ -1031,7 +1003,7 @@ if ( ! function_exists( 'trx_addons_wpml_elementor_widgets_to_translate' ) ) {
 								'avatar' => array(
 									'field'       => 'url',
 									'type'        => sprintf( __( '%s: avatar URL', 'trx_addons' ), $sc ),
-									'editor_type' => 'LINK'
+									'editor_type' => 'LINE'
 								),
 								array(
 									'field'       => 'username',
@@ -1221,7 +1193,7 @@ if ( ! function_exists( 'trx_addons_wpml_elementor_widgets_to_translate' ) ) {
 								),
 								array(
 									'field'       => 'hashtag',
-									'type'        => sprintf( __( '%s: Hashtag or Username', 'trx_addons' ), $sc ),
+									'type'        => sprintf( __( '%s: API key', 'trx_addons' ), $sc ),
 									'editor_type' => 'LINE'
 								),
 								array(

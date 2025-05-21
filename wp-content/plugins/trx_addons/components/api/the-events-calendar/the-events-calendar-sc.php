@@ -95,12 +95,6 @@ if ( ! function_exists( 'trx_addons_sc_events_add_shortcode' ) ) {
 		if ( ! trx_addons_exists_tribe_events() ) {
 			return;
 		}
-
-		$layouts = apply_filters('trx_addons_sc_type', trx_addons_components_get_allowed_layouts( 'api', 'the-events-calendar', 'sc', true ), 'trx_sc_events');
-		if ( empty( $layouts ) ) {
-			return;
-		}
-
 		add_shortcode( "trx_sc_events", "trx_addons_sc_events" );
 	}
 }

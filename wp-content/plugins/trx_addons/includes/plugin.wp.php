@@ -34,10 +34,8 @@ if ( ! function_exists('trx_addons_browser_classes') ) {
 				$is_IE, $is_winIE, $is_macIE, $is_edge,
 				$is_iphone,
 				$is_apache, $is_nginx, $is_IIS, $is_iis7;
-		// User agent
-		$user_agent = ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		// Platform
-		if ( preg_match("/(iPad|iPhone|iPod)/", $user_agent, $matches) ) {
+		if ( preg_match("/(iPad|iPhone|iPod)/", $_SERVER['HTTP_USER_AGENT'], $matches) ) {
 			if ( ! empty($matches[1]) ) {
 				$classes[] = 'ua_ios';
 			}
@@ -49,7 +47,7 @@ if ( ! function_exists('trx_addons_browser_classes') ) {
 			$classes[] = 'ua_mobile';
 		}
 		// Browser
-		if ( preg_match("/[\\s]Firefox\\/([0-9.]*)/", $user_agent, $matches) ) {
+		if ( preg_match("/[\\s]Firefox\\/([0-9.]*)/", $_SERVER['HTTP_USER_AGENT'], $matches) ) {
 			$classes[] = 'ua_firefox';
 		}
 		if ( ! empty($is_gecko) ) {
@@ -57,7 +55,7 @@ if ( ! function_exists('trx_addons_browser_classes') ) {
 		}
 		if ( ! empty($is_chrome) ) {
 			$classes[] = 'ua_chrome';
-			if ( preg_match("/[\\s]OPR\\/([0-9.]*)/", $user_agent, $matches) ) {
+			if ( preg_match("/[\\s]OPR\\/([0-9.]*)/", $_SERVER['HTTP_USER_AGENT'], $matches) ) {
 				if ( ! empty($matches[1]) ) {
 					$classes[] = 'ua_opera ua_opera_webkit';
 				}
@@ -79,9 +77,9 @@ if ( ! function_exists('trx_addons_browser_classes') ) {
 			} else if ( ! empty($is_macIE) ) {
 				$classes[] = 'ua_ie_mac';
 			}
-			if ( preg_match("/Trident[^;]*;[\\s]*rv:([0-9.]*)/", $user_agent, $matches)
+			if ( preg_match("/Trident[^;]*;[\\s]*rv:([0-9.]*)/", $_SERVER['HTTP_USER_AGENT'], $matches)
 				||
-				preg_match("/MSIE[\\s]*([0-9.]*)/", $user_agent, $matches)
+				preg_match("/MSIE[\\s]*([0-9.]*)/", $_SERVER['HTTP_USER_AGENT'], $matches)
 			) {
 				if ( ! empty($matches[1]) ) {
 					$classes[] = 'ua_ie_' . (int)$matches[1];

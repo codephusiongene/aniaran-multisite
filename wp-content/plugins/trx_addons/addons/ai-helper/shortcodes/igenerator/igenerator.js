@@ -262,7 +262,7 @@ jQuery( document ).ready( function() {
 
 					// If the field is 'model' in the layout 'extended' - disable the button 'settings' for the 'openai' model
 					if ( ! settings_light && $sc.hasClass( 'sc_igenerator_extended' ) && $self.attr( 'class' ).indexOf( 'field_model' ) > 0 ) {
-						$self.find( '.sc_igenerator_form_settings_button' ).toggleClass( 'trx_addons_hidden', model.indexOf( 'openai/' ) >= 0 || model.indexOf( 'x-ai/' ) >= 0 );
+						$self.find( '.sc_igenerator_form_settings_button' ).toggleClass( 'trx_addons_hidden', model.indexOf( 'openai/' ) >= 0 );
 					}
 
 					// If the field is 'style' - show it only for the 'stability-ai' model
@@ -278,11 +278,6 @@ jQuery( document ).ready( function() {
 					// If the field is 'lora_model' - show it only for the 'stable-diffusion' models
 					if ( ! settings_light && $self.attr( 'class' ).indexOf( 'field_lora_model' ) > 0 ) {
 						visible &&= model.indexOf( 'stable-diffusion/' ) >= 0 && model != 'stable-diffusion/default';
-					}
-
-					// If the field is 'size' - show it for the not 'x-ai' models
-					if ( ! settings_light && $self.attr( 'class' ).indexOf( 'field_size' ) > 0 ) {
-						visible &&= model.indexOf( 'x-ai/' ) < 0;
 					}
 
 					// If the field is 'size'

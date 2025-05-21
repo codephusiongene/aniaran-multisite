@@ -119,7 +119,7 @@ class TypographyEditor extends Module {
 		) );
 
 		$element->add_control( 'trx_addons_global_fonts_description', array(
-			'raw'             => __( 'You can edit a theme typography also in adminmenu "Theme Panel - Theme Options - Typography" or in "Appearance - Customizer".', 'trx_addons' ),
+			'raw'             => __( 'You can edit a theme typography also in adminmenu "Theme Panel - Theme Options - Typography" or in "Appearance - Сustomizer".', 'trx_addons' ),
 			'type'            => \Elementor\Controls_Manager::RAW_HTML,
 			'content_classes' => 'elementor-descriptor',
 		) );

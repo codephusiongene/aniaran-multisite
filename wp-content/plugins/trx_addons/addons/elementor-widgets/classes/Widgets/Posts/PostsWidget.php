@@ -36,7 +36,7 @@ class PostsWidget extends BaseWidget {
 		// $this->add_skin( new Skins\SkinCard( $this ) );
 		// $this->add_skin( new Skins\SkinCheckerboard( $this ) );
 		// $this->add_skin( new Skins\SkinCreative( $this ) );
-		$this->add_skin( new Skins\SkinEvent( $this ) );
+		// $this->add_skin( new Skins\SkinEvent( $this ) );
 		// $this->add_skin( new Skins\SkinNews( $this ) );
 		// $this->add_skin( new Skins\SkinOverlap( $this ) );
 		// $this->add_skin( new Skins\SkinPortfolio( $this ) );

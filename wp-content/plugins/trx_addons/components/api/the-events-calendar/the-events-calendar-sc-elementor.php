@@ -23,11 +23,6 @@ if ( ! function_exists('trx_addons_sc_events_add_in_elementor')) {
 		if ( ! trx_addons_exists_tribe_events() || ! class_exists( 'TRX_Addons_Elementor_Widget' ) ) {
 			return;
 		}
-
-		$layouts = apply_filters('trx_addons_sc_type', trx_addons_components_get_allowed_layouts( 'api', 'the-events-calendar', 'sc', true ), 'trx_sc_events');
-		if ( empty( $layouts ) ) {
-			return;
-		}
 		
 		class TRX_Addons_Elementor_Widget_Events extends TRX_Addons_Elementor_Widget {
 

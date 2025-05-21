@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \TrxAddons\Core\Singleton;
 
 /**
- * Class to log queries to the API: used tokens in prompt, completion and total
+ * Class to log queries to the OpenAi API: used tokens in prompt, completion and total
  */
 class Logger extends Singleton {
 
@@ -49,7 +49,7 @@ class Logger extends Singleton {
 	 * 
 	 * @access public
 	 * 
-	 * @param array $response  Response from API with completion and usage data
+	 * @param array $response  Response from OpenAi API with completion and usage data
 	 */
 	public function log( $response, $type = 'chat', $args = array(), $section = '' ) {
 
@@ -73,7 +73,7 @@ class Logger extends Singleton {
 			}
 
 		// Image generation: Open AI API
-		} else if ( in_array( $section, array( 'open-ai', 'x-ai' ) ) ) {
+		} else if ( $section == 'open-ai' ) {
 			// Convert entry 'images' to the 'images/default'
 			if ( ! empty( $this->log[ $section ][ 'images' ] ) ) {
 				$this->log[ $section ][ 'images/default' ] = ! empty( $this->log[ $section ][ 'images/default' ] )
@@ -260,7 +260,7 @@ class Logger extends Singleton {
 									. '<pre><b><u>'
 										.  ( empty( $section )
 											? ucfirst( str_replace( '-', ' ', $sec ) )
-											: ( in_array( $section, array( 'open-ai', 'x-ai' ) )
+											: ( $section == 'open-ai'
 												? __( 'Tokens usage & generated images', 'trx_addons' )
 												: ( in_array( $section, array( 'open-ai-assistants', 'flowise-ai', 'google-ai' ) )
 													? __( 'Tokens usage', 'trx_addons' )

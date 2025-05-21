@@ -107,7 +107,7 @@
   -ms-flex-align: start;
   align-items: flex-start;
 }
-.sc_igenerator_form_field.trx_addons_hidden.trx_addons_hidden {
+.sc_igenerator_form_field.trx_addons_hidden {
   display: none;
 }
 .sc_igenerator_form_field + .sc_igenerator_form_field {

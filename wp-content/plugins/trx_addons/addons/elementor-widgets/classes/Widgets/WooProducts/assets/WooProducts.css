@@ -207,6 +207,8 @@
 .trx-addons-woo-products .trx-addons-woo-products-out-of-stock {
   display: block;
   text-align: center;
+  min-width: 2em;
+  min-height: 2em;
   line-height: 2em;
   padding: 0.3em 0.6em;
   margin: 0;

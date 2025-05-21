@@ -3,7 +3,7 @@
 Plugin Name: ThemeREX Addons
 Plugin URI: http://themerex.net
 Description: Add many widgets, shortcodes and custom post types for your theme
-Version: 2.35.0
+Version: 2.34.9.1
 Author: ThemeREX
 Author URI: http://themerex.net
 Text Domain: trx_addons
@@ -14,7 +14,7 @@ Domain Path: /languages
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Current version
-if ( ! defined( 'TRX_ADDONS_VERSION' ) ) define( 'TRX_ADDONS_VERSION', '2.35.0' );
+if ( ! defined( 'TRX_ADDONS_VERSION' ) ) define( 'TRX_ADDONS_VERSION', '2.34.9.1' );
 
 // Hooks order for the plugin and theme on action 'after_setup_theme'
 // 1 - plugin's components and/or theme register hooks for next filters
@@ -302,7 +302,6 @@ if ( ! function_exists( 'trx_addons_load_frontend_scripts' ) ) {
 	add_action( 'trx_addons_action_load_scripts_front', 'trx_addons_load_frontend_scripts', 1, 3 );
 	function trx_addons_load_frontend_scripts( $force = false, $slug = '', $value = 1 ) {
 		global $TRX_ADDONS_STORAGE;
-		$slug = str_replace( '-', '_', $slug );
 		$TRX_ADDONS_STORAGE['enqueue_list'][$slug] = $value;
 		do_action( "trx_addons_action_load_scripts_front_{$slug}", $force );
 	}
@@ -312,7 +311,6 @@ if ( ! function_exists( 'trx_addons_load_frontend_scripts' ) ) {
 if ( ! function_exists( 'trx_addons_need_frontend_scripts' ) ) {
 	function trx_addons_need_frontend_scripts( $slug, $value = 1 ) {
 		global $TRX_ADDONS_STORAGE;
-		$slug = str_replace( '-', '_', $slug );
 		return isset( $TRX_ADDONS_STORAGE['enqueue_list'][$slug] ) && $TRX_ADDONS_STORAGE['enqueue_list'][$slug] == $value;
 	}
 }

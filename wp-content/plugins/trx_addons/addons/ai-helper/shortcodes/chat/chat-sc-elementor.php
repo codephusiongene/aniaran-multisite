@@ -376,7 +376,6 @@ if ( ! function_exists('trx_addons_sc_chat_add_in_elementor')) {
 				$models_openai  = ! $is_edit_mode ? array() : array_values( array_filter( array_keys( $models ), function( $key ) { return Utils::is_openai_model( $key ); } ) );
 				$models_google  = ! $is_edit_mode ? array() : array_values( array_filter( array_keys( $models ), function( $key ) { return Utils::is_google_ai_model( $key ); } ) );
 				$models_flowise = ! $is_edit_mode ? array() : array_values( array_filter( array_keys( $models ), function( $key ) { return Utils::is_flowise_ai_model( $key ); } ) );
-				$models_x_ai    = ! $is_edit_mode ? array() : array_values( array_filter( array_keys( $models ), function( $key ) { return Utils::is_x_ai_model( $key ); } ) );
 
 				// Section: Chat settings
 				$this->start_controls_section(
@@ -521,7 +520,7 @@ if ( ! function_exists('trx_addons_sc_chat_add_in_elementor')) {
 						'type' => \Elementor\Controls_Manager::SWITCHER,
 						'return_value' => '1',
 						'condition' => [
-							'model' => array_merge( $models_openai, $models_google, $models_x_ai )
+							'model' => array_merge( $models_openai, $models_google )
 						]
 					]
 				);
@@ -553,21 +552,7 @@ if ( ! function_exists('trx_addons_sc_chat_add_in_elementor')) {
 						]
 					)
 				);
-
-				$this->add_control(
-					'attachments_description_x_ai',
-					array(
-						'raw'             => '<strong>' . __( 'Supported file types', 'trx_addons' ) . '</strong>'
-											. '<br>' . __( "In the X AI API, only models with the '-vision' suffix support image analysis", 'trx_addons' ),
-						'type'            => \Elementor\Controls_Manager::RAW_HTML,
-						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-						'condition' => [
-							'allow_attachments' => '1',
-							'model' => $models_x_ai
-						]
-					)
-				);
-
+	
 				$this->end_controls_section();
 			}
 

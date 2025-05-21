@@ -1497,22 +1497,6 @@ class trx_addons_demo_data_importer {
 							// If 'demo_set' == 'part' - prepare data
 							if ($this->options['demo_set']=='part') {
 								if ( $table=='posts' ) {
-									// Detect a first free number of the post copy (if already exists posts with the same post_name, for example 'page-1', 'page-2', etc.)
-									// and replace it in the post_name and in the post's title (or add it if not exists)
-									$q = $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE post_name REGEXP %s ORDER BY post_name DESC", '^' . esc_sql( $row['post_name'] ) . '(\\-[\\d]+)?$' );
-									$rez = $wpdb->get_results( $q, ARRAY_A );
-									$num = 1;
-									if ( isset($rez[0]['post_name']) && $rez[0]['post_name'] != '' ) {
-										if ( preg_match('/^([a-zA-Z0-9\-_]+)\-(\d+)$/', $rez[0]['post_name'], $rez) ) {
-											$num = (int)$rez[2] + 1;
-										} else {
-											$num = 2;
-										}
-									}
-									if ( $num > 1 ) {
-										$row['post_name']  .= '-' . $num;
-										$row['post_title'] .= ' #' . $num;
-									}
 									// Replace images in the post's content
 									$row['post_content'] = preg_replace('/(\s+image=["\']\d+["\'])/', ' image="'.esc_attr($this->part_image['id']).'"', $row['post_content']);
 									$row['post_content'] = preg_replace('/(\s+url=["\']\d+["\'])/', ' url="'.esc_attr($this->part_image['id']).'"', $row['post_content']);
@@ -1524,9 +1508,7 @@ class trx_addons_demo_data_importer {
 								if ( $table=='postmeta' ) {
 									// Replace images in the meta values
 									if ($row['meta_key']=='_elementor_data' ) {
-										$row['meta_value'] = preg_replace( '/(url\([^\)]+\))/', 'url(' . addslashes( $this->part_image['url'] ) . ')', $row['meta_value'] );
-										$row['meta_value'] = preg_replace( '/"url":"[^\"]+\.(jpg|png|gif|webp)","id":[0-9]+/', '"url":"' . addslashes( $this->part_image['url'] ) . '","id":' . $this->part_image['id'], $row['meta_value'] );
-										$row['meta_value'] = preg_replace( '/"id":[0-9]+,"url":"[^\"]+\.(jpg|png|gif|webp)"/', '"id":' . $this->part_image['id'] . ',"url":"' . addslashes( $this->part_image['url'] ) . '"', $row['meta_value'] );
+										$row['meta_value'] = preg_replace('/(url\([^\)]+\))/', 'url('.esc_attr($this->part_image['url']).')', $row['meta_value']);
 									}
 									if ($row['meta_key']=='_wpb_shortcodes_custom_css' ) {
 										$row['meta_value'] = preg_replace('/(url\([^\)]+\))/', 'url('.esc_attr($this->part_image['url']).')', $row['meta_value']);
@@ -1555,7 +1537,6 @@ class trx_addons_demo_data_importer {
 						$values .= ($values ? ',' : '') . '(' . trim($v) . ')';
 						// If query length exceed 64K - run query, because MySQL not accept long query string ( > 65535 bytes)
 						// If current table 'users' or 'usermeta' - run queries row by row, because we append data
-						// If current table 'posts' and we doing partial import - run queries row by row, because we need to replace post ID, slug and guid
 						if (strlen($values . $v) > 64000 
 							|| in_array($table, apply_filters('trx_addons_filter_importer_separate_insert', array('users', 'usermeta')))
 							|| ($this->options['demo_set']=='part' && $table=='posts')) {
