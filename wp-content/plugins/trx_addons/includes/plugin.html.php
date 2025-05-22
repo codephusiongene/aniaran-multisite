@@ -899,20 +899,8 @@ if ( ! function_exists( 'trx_addons_is_external_url' ) ) {
 	 * @return bool True if string is external URL
 	 */
 	function trx_addons_is_external_url( $url ) {
-		return trx_addons_is_url( $url ) && strpos( $url, trx_addons_get_site_domain() ) === false;
-	}
-}
-
-if ( ! function_exists( 'trx_addons_is_local_url' ) ) {
-	/**
-	 * Check if string is local URL
-	 * 
-	 * @param string $url URL
-	 * 
-	 * @return bool True if string is local URL
-	 */
-	function trx_addons_is_local_url( $url ) {
-		return trx_addons_is_url( $url ) && strpos( $url, trx_addons_get_site_domain() ) !== false;
+		$parts = explode( '?', apply_filters( 'trx_addons_filter_home_url', home_url() ) );   // With activated WPML home_url() contain ?lang=xx and equal to external link
+		return trx_addons_is_url( $url ) && strpos( $url, trx_addons_remove_protocol( $parts[0], true ) ) === false;
 	}
 }
 
@@ -925,7 +913,7 @@ if ( ! function_exists( 'trx_addons_get_site_domain' ) ) {
 	 */
 	function trx_addons_get_site_domain() {
 		$url   = site_url();
-		$parts = explode( '?', trx_addons_remove_protocol( $url, true ) );   // With activated WPML home_url() contain ?lang=xx and equal to external link
+		$parts = explode( '?', trx_addons_remove_protocol( $url, true ) );
 		$url   = untrailingslashit( $parts[0] );
 		return apply_filters( 'trx_addons_filter_get_site_domain', $url );
 	}

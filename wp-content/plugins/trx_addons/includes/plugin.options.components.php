@@ -46,14 +46,13 @@ if ( ! function_exists( 'trx_addons_components_get_allowed_layouts' ) ) {
 	/**
 	 * Return list of allowed layouts
 	 *
-	 * @param string $type    Component type: 'cpt', 'sc', 'widgets', etc.
-	 * @param string $slug    Component slug: 'team', 'layouts', 'socials', etc.
-	 * @param string $layout  Layout type: 'sc' - layouts for shortcodes, 'arh' - layouts for archive pages
-	 * @param bool   $strict  If true - return only allowed layouts, if false - return first layout if no one is allowed
+	 * @param string $type Component type: 'cpt', 'sc', 'widgets', etc.
+	 * @param string $slug Component slug: 'team', 'layouts', 'socials', etc.
+	 * @param string $layout Layout type: 'sc' - layouts for shortcodes, 'arh' - layouts for archive pages
 	 * 
 	 * @return array  List of allowed layouts
 	 */
-	function trx_addons_components_get_allowed_layouts( $type, $slug, $layout = 'sc', $strict = false ) {
+	function trx_addons_components_get_allowed_layouts( $type, $slug, $layout = 'sc' ) {
 		global $TRX_ADDONS_STORAGE;
 		$list = isset( $TRX_ADDONS_STORAGE[ $type . '_list' ][ $slug ][ 'layouts_' . $layout ] ) 
 					? $TRX_ADDONS_STORAGE[ $type . '_list' ][ $slug ][ 'layouts_' . $layout ]
@@ -68,7 +67,7 @@ if ( ! function_exists( 'trx_addons_components_get_allowed_layouts' ) ) {
 					unset( $list[ $key ] );
 				}
 			}
-			if ( ! $strict && count( $list ) == 0 ) {
+			if ( count( $list ) == 0 ) {
 				$list = $first;
 			}
 		}

@@ -46,7 +46,6 @@ if ( ! function_exists( 'trx_addons_tribe_events_importer_set_options' ) ) {
 	function trx_addons_tribe_events_importer_set_options( $options = array() ) {
 		if ( trx_addons_exists_tribe_events() && in_array( 'the-events-calendar', $options['required_plugins'] ) ) {
 			$options['additional_options'][] = 'tribe_events_calendar_options';
-			$options['additional_options'][] = 'tribe_customizer';
 		}
 		if ( is_array( $options['files'] ) && count( $options['files'] ) > 0 ) {
 			foreach ( $options['files'] as $k => $v ) {
@@ -72,7 +71,7 @@ if ( ! function_exists( 'trx_addons_tribe_events_importer_check_options' ) ) {
 	 * @return boolean          Allow import or not
 	 */
 	function trx_addons_tribe_events_importer_check_options( $allow, $k, $v, $options ) {
-		if ( $allow && in_array( $k, array( 'tribe_events_calendar_options', 'tribe_customizer' ) ) ) {
+		if ( $allow && $k == 'tribe_events_calendar_options' ) {
 			$allow = trx_addons_exists_tribe_events() && in_array( 'the-events-calendar', $options['required_plugins'] );
 		}
 		return $allow;

@@ -21,7 +21,6 @@ if ( ! trait_exists( 'ListsImageGeneration' ) ) {
 				'openai' => esc_html__( 'Open AI', 'trx_addons' ),
 				'stable-diffusion' => esc_html__( 'ModelsLab (ex Stable Diffusion)', 'trx_addons' ),
 				'stability-ai' => esc_html__( 'Stability AI', 'trx_addons' ),
-				'x-ai' => esc_html__( 'X AI', 'trx_addons' ),
 			) );
 		}
 
@@ -89,18 +88,6 @@ if ( ! trait_exists( 'ListsImageGeneration' ) ) {
 						}
 						foreach ( $stability_models as $k => $v ) {
 							$models[ 'stability-ai/' . $k ] = $v['title'];
-						}
-					}
-				}
-				// X AI
-				if ( $api == 'x-ai' && (int)$enable > 0 ) {
-					$x_ai_models = self::get_x_ai_models();
-					if ( is_array( $x_ai_models ) && count( $x_ai_models ) > 0 ) {
-						if ( $groups ) {
-							$models[ 'x-ai/-' ] = '\\-' . __( 'X AI models', 'trx_addons' );
-						}
-						foreach ( $x_ai_models as $k => $v ) {
-							$models[ 'x-ai/' . $k ] = $v['title'];
 						}
 					}
 				}
@@ -196,17 +183,16 @@ if ( ! trait_exists( 'ListsImageGeneration' ) ) {
 			$openai_enable = trx_addons_get_option( 'ai_helper_token_openai', '' ) != '';
 			$sd_enable = trx_addons_get_option( 'ai_helper_token_stable_diffusion', '' ) != '';
 			$stability_enable = trx_addons_get_option( 'ai_helper_token_stability_ai', '' ) != '';
-			$x_ai_enable = trx_addons_get_option( 'ai_helper_token_x_ai', '' ) != '';
 			return apply_filters( 'trx_addons_filter_ai_helper_list_ai_image_sizes', array_merge(
-					// Open AI, Stable Diffusion, X AI
-					in_array( $api, array( 'all', 'openai', 'sd', 'stable-diffusion', 'ml', 'modelslab', 'x-ai' ) ) && ( $openai_enable || $sd_enable || $x_ai_enable )
+					// Open AI and Stable Diffusion
+					in_array( $api, array( 'all', 'openai', 'sd', 'stable-diffusion', 'ml', 'modelslab' ) ) && ( $openai_enable || $sd_enable )
 						? array(
 							'256x256'   => esc_html__( ' 256 x  256', 'trx_addons' ),
 							'512x512'   => esc_html__( ' 512 x  512', 'trx_addons' ),
 							)
 						: array(),
 					// Any model
-					$openai_enable || $sd_enable || $stability_enable || $x_ai_enable
+					$openai_enable || $sd_enable || $stability_enable
 						? array(
 							'1024x1024' => esc_html__( '1024 x 1024', 'trx_addons' ),
 							)
@@ -771,80 +757,6 @@ if ( ! trait_exists( 'ListsImageGeneration' ) ) {
 				'pixel-art' => esc_html__( 'Pixel Art', 'trx_addons' ),
 				'tile-texture' => esc_html__( 'Tile Texture', 'trx_addons' ),
 			) );
-		}
-
-
-
-		/* X AI API
-		--------------------------------------------------------------------------------------- */
-
-		/**
-		 * Return a default list of image models for X AI
-		 * 
-		 * @access public
-		 * @static
-		 * 
-		 * @return array  	  The list of image models for X AI
-		 */
-		static function get_default_x_ai_models() {
-			return apply_filters( 'trx_addons_filter_ai_helper_default_x_ai_models', array(
-				'grok-2-image-latest' => array(
-					'title' => esc_html__( 'Grok 2 Image', 'trx_addons' )
-				),
-			) );
-		}
-
-		/**
-		 * Return a list of image models for X AI
-		 * 
-		 * @access public
-		 * @static
-		 * 
-		 * @return array  	  The list of image models for X AI
-		 */
-		static function get_x_ai_models() {
-			$models = array();
-			$token = trx_addons_get_option( 'ai_helper_token_x_ai', '' );
-			if ( ! empty( $token ) ) {
-				$autoload = trx_addons_get_option( 'ai_helper_autoload_models_x_ai', 0 );
-				if ( (int)$autoload > 0 ) {
-					$models = get_transient( "trx_addons_ai_helper_list_models_x_ai" );
-					if ( ! is_array( $models ) || count( $models ) == 0 ) {
-						$response = XAi::instance()->list_models( array( 'type' => 'image' ) );
-						if ( ! empty( $response['models'] ) && is_array( $response['models'] ) && count( $response['models'] ) > 0 ) {
-							$new_models = array();
-							foreach ( $response['models'] as $v ) {
-								if ( ! empty( $v['id'] ) ) {
-									$new_models[ $v['id'] ] = array(
-										'id' => $v['id'],
-										'title' => ucfirst( str_replace( '-', ' ', $v['id'] ) ),
-									);
-								}
-							}
-							$models = $new_models;
-						} else {
-							$models = self::get_default_x_ai_models();
-						}
-						set_transient( "trx_addons_ai_helper_list_models_x_ai", $models, 7 * 24 * 60 * 60 );	// 7 days
-					}
-				} else {
-					$models = trx_addons_get_option( 'ai_helper_models_x_ai' );
-					if ( empty( $models ) || ! is_array( $models ) || empty( $models[0]['id'] ) ) {
-						$models = self::get_default_x_ai_models();
-					} else {
-						$new_models = array();
-						foreach ( $models as $k => $v ) {
-							if ( ! empty( $v['id'] ) ) {
-								$new_models[ $v['id'] ] = $v;
-								unset( $new_models[ $v['id'] ]['id'] );
-							}
-						}
-						$models = $new_models;
-					}
-				}
-			}
-
-			return $models;
 		}
 	}
 }

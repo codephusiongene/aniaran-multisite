@@ -28,11 +28,6 @@ if ( ! function_exists( 'trx_addons_sc_events_add_in_vc' ) ) {
 			return;
 		}
 
-		$layouts = apply_filters('trx_addons_sc_type', trx_addons_components_get_allowed_layouts( 'api', 'the-events-calendar', 'sc', true ), 'trx_sc_events');
-		if ( empty( $layouts ) ) {
-			return;
-		}
-
 		vc_lean_map( "trx_sc_events", 'trx_addons_sc_events_add_in_vc_params' );
 		class WPBakeryShortCode_Trx_Sc_Events extends WPBakeryShortCode {}
 	}

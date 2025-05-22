@@ -648,7 +648,7 @@ body.admin-bar .trx-addons-ver-hamburger-menu .trx-addons-mobile-menu-outer-cont
   display: block;
 }
 
-.trx-addons-nav-menu-container .trx-addons-submenu {
+.trx-addons-nav-menu-container li ul {
   background-color: #f7f7f7;
 }
 

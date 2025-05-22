@@ -1691,36 +1691,6 @@ abstract class BaseSkin extends Elementor_Skin_Base {
 			)
 		);
 
-		$this->add_responsive_control(
-			'parts_gap',
-			array(
-				'label'     => __( 'Elements Gap', 'trx_addons' ),
-				'type'      => Controls_Manager::SLIDER,
-				'range'     => array(
-					'em' => array(
-						'min' => 0,
-						'max' => 10,
-						'step' => 0.1,
-					),
-					'rem' => array(
-						'min' => 0,
-						'max' => 10,
-						'step' => 0.1,
-					),
-				),
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
-				'default'   => array(
-					'size' => 30,
-				),
-				'selectors' => array(
-					'{{WRAPPER}} .trx-addons-posts-skin-event .trx-addons-posts-item-content' => 'gap: {{SIZE}}{{UNIT}};',
-				),
-				'condition' => array(
-					'_skin' => array( 'event' ),
-				),
-			)
-		);
-
 		$this->end_controls_section();
 	}
 
@@ -4675,6 +4645,47 @@ abstract class BaseSkin extends Elementor_Skin_Base {
 	}
 
 	/**
+	 * Render post meta output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @access protected
+	 */
+	protected function render_post_meta() {
+		$settings  = $this->parent->get_settings_for_display();
+		$post_meta = $this->get_instance_value( 'post_meta' );
+
+		if ( 'yes' === $post_meta ) {
+			?>
+			<?php do_action( 'trx_addons_action_elementor_widgets_posts_before_single_post_meta', get_the_ID(), $settings ); ?>
+			<div class="trx-addons-posts-item-meta">
+				<?php
+				$meta_items = $this->get_ordered_items( Posts::get_meta_items() );
+
+				foreach ( $meta_items as $meta_item => $index ) {
+					if ( 'author' === $meta_item ) {
+						// Post Author
+						$this->render_meta_item( 'author' );
+					}
+
+					if ( 'date' === $meta_item ) {
+						// Post Date
+						$this->render_meta_item( 'date' );
+					}
+
+					if ( 'comments' === $meta_item ) {
+						// Post Comments
+						$this->render_meta_item( 'comments' );
+					}
+				}
+				?>
+			</div>
+			<?php
+			do_action( 'trx_addons_action_elementor_widgets_posts_after_single_post_meta', get_the_ID(), $settings );
+		}
+	}
+
+	/**
 	 * Render post body output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
@@ -4837,47 +4848,6 @@ abstract class BaseSkin extends Elementor_Skin_Base {
 	 *
 	 * @access protected
 	 */
-	protected function render_post_meta() {
-		$settings  = $this->parent->get_settings_for_display();
-		$post_meta = $this->get_instance_value( 'post_meta' );
-
-		if ( 'yes' === $post_meta ) {
-			?>
-			<?php do_action( 'trx_addons_action_elementor_widgets_posts_before_single_post_meta', get_the_ID(), $settings ); ?>
-			<div class="trx-addons-posts-item-meta">
-				<?php
-				$meta_items = $this->get_ordered_items( Posts::get_meta_items() );
-
-				foreach ( $meta_items as $meta_item => $index ) {
-					if ( 'author' === $meta_item ) {
-						// Post Author
-						$this->render_meta_item( 'author' );
-					}
-
-					if ( 'date' === $meta_item ) {
-						// Post Date
-						$this->render_meta_item( 'date' );
-					}
-
-					if ( 'comments' === $meta_item ) {
-						// Post Comments
-						$this->render_meta_item( 'comments' );
-					}
-				}
-				?>
-			</div>
-			<?php
-			do_action( 'trx_addons_action_elementor_widgets_posts_after_single_post_meta', get_the_ID(), $settings );
-		}
-	}
-
-	/**
-	 * Render post meta output on the frontend.
-	 *
-	 * Written in PHP and used to generate the final HTML.
-	 *
-	 * @access protected
-	 */
 	protected function render_meta_item( $item_type = '' ) {
 		$skin     = $this->get_id();
 		$settings = $this->parent->get_settings_for_display();
@@ -4930,12 +4900,12 @@ abstract class BaseSkin extends Elementor_Skin_Base {
 					if ( TrxAddonsUtils::is_tribe_events_post( get_the_ID() ) && function_exists( 'tribe_get_start_date' ) ) {
 						$date_format = $this->get_instance_value( 'date_format_select' );
 						$date_custom_format = $this->get_instance_value( 'date_custom_format' );
+
 						if ( 'custom' === $date_format && $date_custom_format ) {
 							$date_format = $date_custom_format;
-						} else if ( empty( $date_format ) ) {
-							$date_format = get_option( 'date_format' );
 						}
-						$post_date = tribe_get_start_date( get_the_ID(), $date_format );
+
+						$post_date = tribe_get_start_time( get_the_ID(), $date_format );
 					} else {
 						$post_date = $this->get_post_date();
 					}

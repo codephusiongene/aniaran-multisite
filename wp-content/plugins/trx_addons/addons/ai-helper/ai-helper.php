@@ -25,7 +25,6 @@ new \TrxAddons\Core\Autoloader( array(
 		'ThemeRex\\FlowiseAi',
 		'ThemeRex\\GoogleAi',
 		'ThemeRex\\LumaLabs',
-		'ThemeRex\\XAi',
 		'Rahul900day\\Gpt3Encoder',
 		'Markdown\\Parser'
 	),
@@ -40,7 +39,6 @@ new \TrxAddons\Core\Autoloader( array(
 		'ThemeRex\\StabilityAi' => 'vendors',
 		'ThemeRex\\StableDiffusion' => 'vendors',
 		'ThemeRex\\LumaLabs' => 'vendors',
-		'ThemeRex\\XAi' => 'vendors',
 		'AssistantTools' => 'support',
 		'EmbedChats' => 'support',
 		'Gutenberg' => 'support',

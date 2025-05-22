@@ -139,9 +139,6 @@ if ( ! function_exists( 'trx_addons_api_load' ) ) {
 								'classic'	=> esc_html__('Classic', 'trx_addons'),
 							)
 						),
-			'event-tickets' => array(
-							'title' => __('Events Tickets', 'trx_addons')
-						),
 			'tourmaster' => array(
 							'title' => __('Tour Master', 'trx_addons')
 						),

@@ -41,7 +41,6 @@ if ( ! class_exists( 'Options' ) ) {
 			$log_flowise_ai = $is_options_page ? Logger::instance()->get_log_report( 'flowise-ai') : '';
 			$log_google_ai = $is_options_page ? Logger::instance()->get_log_report( 'google-ai') : '';
 			$log_lumalabs_ai = $is_options_page ? Logger::instance()->get_log_report( 'lumalabs-ai' ) : '';
-			$log_x_ai = $is_options_page ? Logger::instance()->get_log_report( 'x-ai') : '';
 			$log_add_support = '';
 			$log_ai_assistant = $is_options_page ? Logger::instance()->get_log( 'trx-ai-assistants-support') : '';
 			if ( is_array( $log_ai_assistant ) && count( $log_ai_assistant ) > 0 ) {
@@ -1069,7 +1068,7 @@ if ( ! class_exists( 'Options' ) ) {
 					"std" => "",
 					"type" => "text",
 					"dependency" => array(
-						"ai_helper_token_google_ai" => array('not_empty')
+						"ai_helper_token_openai" => array('not_empty')
 					),
 				),
 				'ai_helper_autoload_models_google_ai' => array(
@@ -1117,165 +1116,6 @@ if ( ! class_exists( 'Options' ) ) {
 							"type" => "text"
 						),
 					)
-				),
-
-				// X AI API settings
-				//---------------------------------------------------------------------
-				'ai_helper_section_x_ai' => array(
-					"title" => esc_html__('X AI API', 'trx_addons'),
-					"icon" => TRX_ADDONS_PLUGIN_ADDONS . 'ai-helper/images/icons/x-ai.svg',
-					"type" => "section"
-				),
-				'ai_helper_info_x_ai' => array(
-					"title" => esc_html__('X AI', 'trx_addons'),
-					"desc" => wp_kses_data( __("Settings of the AI Helper for X AI API", 'trx_addons') )
-							. ( ! empty( $log_x_ai ) ? wp_kses( $log_x_ai, 'trx_addons_kses_content' ) : '' ),
-					"type" => "info"
-				),
-				'ai_helper_token_x_ai' => array(
-					"title" => esc_html__('Token', 'trx_addons'),
-					"desc" => wp_kses( sprintf(
-													__('Specify a token to use the X AI API. You can generate a token in your personal account using the link %s', 'trx_addons'),
-													apply_filters( 'trx_addons_filter_x_ai_api_key_url',
-																	'<a href="' . esc_url( XAi::instance()->get_url() ) . '" target="_blank">' . esc_url( XAi::instance()->get_url() ) . '</a>'
-																)
-												),
-										'trx_addons_kses_content'
-									),
-					"std" => "",
-					"type" => "text"
-				),
-				'ai_helper_proxy_x_ai' => array(
-					"title" => esc_html__('Proxy URL', 'trx_addons'),
-					"desc" => wp_kses_data( __('Specify the address of the proxy-server (if needed).', 'trx_addons') ),
-					"std" => "",
-					"type" => "text",
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-				),
-				'ai_helper_proxy_auth_x_ai' => array(
-					"title" => esc_html__('Proxy Auth', 'trx_addons'),
-					"desc" => wp_kses_data( __('Specify the login and password to access a proxy-server (if needed) in format login:password', 'trx_addons') ),
-					"std" => "",
-					"type" => "text",
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-				),
-				'ai_helper_temperature_x_ai' => array(
-					"title" => esc_html__('Temperature', 'trx_addons'),
-					"desc" => wp_kses_data( __('Select a temperature to use with API queries in the editor.', 'trx_addons') )
-							. '<br />'
-							. wp_kses_data( __('What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.', 'trx_addons') ),
-					"std" => 1.0,
-					"min" => 0,
-					"max" => 2.0,
-					"step" => 0.1,
-					"type" => "slider",
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-				),
-				'ai_helper_chat_models_x_ai_batch' => array(
-					"title" => esc_html__("Chat Models", 'trx_addons'),
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-					"type" => "batch"
-				),
-				'ai_helper_autoload_chat_models_x_ai' => array(
-					"title" => esc_html__('Autoload a list of chat models', 'trx_addons'),
-					"desc" => wp_kses_data( __('Automatically load the language model list from the API or maintain a manual model list.', 'trx_addons') ),
-					"std" => "0",
-					"type" => "switch",
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-				),
-				'ai_helper_chat_models_x_ai' => array(
-					"title" => esc_html__("List of available chat models", 'trx_addons'),
-					"desc" => wp_kses_data( __("Specify the id and name (title) of the model, and the maximum number of tokens the model is capable of processing on input and issuing as a response.", 'trx_addons') ),
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty'),
-						"ai_helper_autoload_chat_models_x_ai" => array('0')
-					),
-					"clone" => true,
-					"std" => trx_addons_list_from_array( Lists::get_default_x_ai_chat_models() ),
-					"type" => "group",
-					"fields" => array(
-						"id" => array(
-							"title" => esc_html__("Model ID", 'trx_addons'),
-							"class" => "trx_addons_column-1_4",
-							"std" => "",
-							"type" => "text"
-						),
-						"title" => array(
-							"title" => esc_html__("Title", 'trx_addons'),
-							"class" => "trx_addons_column-1_4",
-							"std" => "",
-							"type" => "text"
-						),
-						"max_tokens" => array(
-							"title" => esc_html__("Input tokens", 'trx_addons'),
-							"class" => "trx_addons_column-1_4",
-							"std" => 4000,
-							"min" => 0,
-							"max" => Utils::get_default_max_tokens(),
-							"step" => 100,
-							"type" => "slider"
-						),
-						"output_tokens" => array(
-							"title" => esc_html__("Output tokens", 'trx_addons'),
-							"class" => "trx_addons_column-1_4",
-							"std" => 4000,
-							"min" => 0,
-							"max" => Utils::get_default_max_tokens(),
-							"step" => 100,
-							"type" => "slider"
-						),
-					)
-				),
-				'ai_helper_image_models_x_ai_batch' => array(
-					"title" => esc_html__("Image Models", 'trx_addons'),
-					"type" => "batch"
-				),
-				'ai_helper_autoload_models_x_ai' => array(
-					"title" => esc_html__('Autoload a list of image models', 'trx_addons'),
-					"desc" => wp_kses_data( __('Automatically load the image model list from the API or maintain a manual model list.', 'trx_addons') ),
-					"std" => "0",
-					"type" => "switch",
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty')
-					),
-				),
-				'ai_helper_models_x_ai' => array(
-					"title" => esc_html__("List of available image models", 'trx_addons'),
-					"desc" => wp_kses_data( __("Specify an id and name (title) for each new model.", 'trx_addons') ),
-					"dependency" => array(
-						"ai_helper_token_x_ai" => array('not_empty'),
-						"ai_helper_autoload_models_x_ai" => array('0')
-					),
-					"clone" => true,
-					"std" => trx_addons_list_from_array( Lists::get_default_x_ai_models() ),
-					"type" => "group",
-					"fields" => array(
-						"id" => array(
-							"title" => esc_html__("Model ID", 'trx_addons'),
-							"class" => "trx_addons_column-1_2",
-							"std" => "",
-							"type" => "text"
-						),
-						"title" => array(
-							"title" => esc_html__("Title", 'trx_addons'),
-							"class" => "trx_addons_column-1_2",
-							"std" => "",
-							"type" => "text"
-						),
-					)
-				),
-				'ai_helper_models_x_ai_batch_end' => array(
-					"type" => "batch_end"
 				),
 
 				// LumaLabs AI API settings

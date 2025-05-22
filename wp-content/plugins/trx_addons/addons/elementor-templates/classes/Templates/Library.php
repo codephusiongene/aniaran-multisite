@@ -291,79 +291,67 @@ class Library {
 				if ( is_array( $v ) || is_object( $v ) ) {
 					$content[ $k ] = $this->download_images( $v, $template_name, $k );
 				} else if ( is_string( $v ) && stripos( $v, 'http' ) === 0 ) {					// Check if the string is a URL
-					$is_image = preg_match( '/http[s]?:.*\.(jpg|jpeg|png|gif|svg|webp)/i', $v );
-					$is_video = preg_match( '/http[s]?:.*\.(mp4|webm|ogg)/i', $v );
-					$is_audio = preg_match( '/http[s]?:.*\.(mp3|ogg|wav)/i', $v );
-					$is_media = $is_image || $is_video || $is_audio;
-					$is_local = ( ! empty( $content['source'] ) && $content['source'] == 'library' ) || trx_addons_is_local_url( $v );
-					if ( $is_media && $is_local ) {	// Check if the URL is a local media file
-						$media_name = basename( $v );
+					if ( preg_match( '/http[s]?:.*\.(jpg|jpeg|png|gif|svg|webp)/i', $v ) ) {	// Check if the URL is an image
+						$image_name = basename( $v );
 						$file_array = array(
-							'name' => $media_name,
+							'name' => $image_name,
 						);
 						if ( ! isset( $loaded[ $v ] ) ) {
 							$loaded[ $v ] = array(
-								'id' => 0,
 								'url' => '',
+								'id' => 0,
 							);
-							// Get a media file content
-							$is_no_media = false;
-							$ext = strtolower( pathinfo( $media_name, PATHINFO_EXTENSION ) );
-							$no_media_key = $is_video ? 'mp4' : ( $is_audio ? 'mp3' : ( $ext == 'svg' ? 'svg' : 'img' ) );
-							$media_content = trx_addons_fgc( $templates_url . $media_name );
-							if ( empty( $media_content ) && apply_filters( 'trx_addons_filter_elementor_templates_download_images_from_site', false ) ) {
-								$media_content = trx_addons_fgc( $v );
+							// Get an image content
+							$is_no_image = false;
+							$no_image_key = strtolower( pathinfo( $image_name, PATHINFO_EXTENSION ) ) == 'svg' ? 'svg' : 'img';
+							$image_url = $templates_url . $image_name;
+							$image_content = trx_addons_fgc( $image_url );
+							if ( empty( $image_content ) && apply_filters( 'trx_addons_filter_elementor_templates_download_images_from_site', false ) ) {
+								$image_content = trx_addons_fgc( $v );
 							}
-							if ( empty( $media_content ) ) {
-								if ( ! empty( $no_image_attachment[ $no_media_key ]['id'] ) && ! empty( $no_image_attachment[ $no_media_key ]['url'] ) ) {
+							if ( empty( $image_content ) ) {
+								$image_name = $file_array['name'] = 'no-image.' . ( $no_image_key == 'svg' ? 'svg' : 'jpg' );
+								if ( ! empty( $no_image_attachment[ $no_image_key ]['id'] ) && trx_addons_get_attachment_url( $no_image_attachment[ $no_image_key ]['id'] ) != '' ) {
 									$loaded[ $v ] = array(
-										'id'  => $no_image_attachment[ $no_media_key ]['id'],
-										'url' => $no_image_attachment[ $no_media_key ]['url'],
+										'url' => $no_image_attachment[ $no_image_key ]['url'],
+										'id' => $no_image_attachment[ $no_image_key ]['id'],
 									);
 								} else {
-									$media_name = $file_array['name'] = ( $is_video ? 'no-video' : ( $is_audio ? 'no-audio' : 'no-image' ) )
-																		. '.' . ( $no_media_key == 'img' ? 'jpg' : $no_media_key );
-									$media_content = trx_addons_fgc( trx_addons_get_file_dir( 'css/images/' . $media_name ) );
-									$is_no_media = true;
+									$image_content = trx_addons_fgc( trx_addons_get_file_dir( 'css/images/no-image.' . ( $no_image_key == 'svg' ? 'svg' : 'jpg' ) ) );
+									$is_no_image = true;
 								}
 							}
-							if ( ! empty( $media_content ) ) {
+							if ( ! empty( $image_content ) ) {
 								// Save a content to the file to temp location
-								$temp_file_name = wp_tempnam( $media_name );
-								if ( $temp_file_name && trx_addons_fpc( $temp_file_name, $media_content ) ) {
+								$temp_file_name = wp_tempnam( $image_name );
+								if ( $temp_file_name && trx_addons_fpc( $temp_file_name, $image_content ) ) {
 									$file_array['tmp_name'] = $temp_file_name;
 								}
 								if ( ! empty( $file_array['tmp_name'] ) ) {
 									$attachment_post_data = array(
-										'post_title' => $media_name,
+										'post_title' => $image_name,
 										'post_content' => '',
 										'post_excerpt' => '',
 										'post_status' => 'inherit',
 									);
 									// Allow SVG uploading
-									if ( $ext == 'svg' ) {
-										$old_setting = trx_addons_get_setting( 'allow_upload_svg', false );
-										trx_addons_set_setting( 'allow_upload_svg', true );
-									}
 									$old_setting = trx_addons_get_setting( 'allow_upload_svg', false );
 									trx_addons_set_setting( 'allow_upload_svg', true );
 									// Save an image to the media library
 									$attachment_id = media_handle_sideload( $file_array, 0, null, $attachment_post_data );
-									// Restore the old SVG setting
-									if ( $ext == 'svg' ) {
-										trx_addons_set_setting( 'allow_upload_svg', $old_setting );
-									}
+									// Restore the old setting
+									trx_addons_set_setting( 'allow_upload_svg', $old_setting );
 									// Save the result to the cache
 									if ( ! is_wp_error( $attachment_id ) ) {
 										$loaded[ $v ] = array(
+											'url' => trx_addons_get_attachment_url( $attachment_id ),
 											'id' => $attachment_id,
-											'url' => wp_get_attachment_url( $attachment_id ),	//trx_addons_get_attachment_url( $attachment_id )
 										);
-										// Save the no-media data
-										if ( $is_no_media ) {
-											$no_image_attachment[ $no_media_key ] = array(
-												'id' => $loaded[ $v ]['id'],
+										// Save the no-image data
+										if ( $is_no_image ) {
+											$no_image_attachment[ $no_image_key ] = array(
 												'url' => $loaded[ $v ]['url'],
+												'id' => $loaded[ $v ]['id'],
 											);
 											update_option( 'trx_addons_no_image_attachment', $no_image_attachment );
 										}

@@ -720,13 +720,13 @@ if ( ! function_exists( 'trx_addons_sc_igenerator_translate_prompt' ) ) {
 		// Translate only if this filter was called from the shortcode [trx_sc_igenerator] or from the Media Library
 		// and only if the option 'Translate prompt' is enabled
 		// and only if the prompt contains non-English characters
-		// and only if the model is not 'openai/dall-e-3' or 'x-ai/*'
+		// and only if the model is not 'dall-e-3'
 		if ( in_array( $from, array( 'sc_igenerator', 'media_library_generate_images', 'media_library_variations' ) )
 			&& (int)trx_addons_get_option( 'ai_helper_sc_igenerator_translate_prompt' ) == 1
 			&& trx_addons_str_is_not_english( $prompt )
 		) {
 			$model = ! empty( $args['model'] ) ? $args['model'] : Utils::get_default_image_model();
-			if ( apply_filters( 'trx_addons_filter_sc_igenerator_auto_translate_prompt', ! Utils::is_openai_dall_e_3_model( $model ) && ! Utils::is_x_ai_model( $model ), $model ) ) {
+			if ( apply_filters( 'trx_addons_filter_sc_igenerator_auto_translate_prompt', ! Utils::is_openai_dall_e_3_model( $model ), $model ) ) {
 				$prompt = Utils::translate( $prompt );
 			}
 		}

@@ -4,7 +4,6 @@ namespace TrxAddons\AiHelper;
 use TrxAddons\AiHelper\OpenAi;
 use TrxAddons\AiHelper\StableDiffusion;
 use TrxAddons\AiHelper\StabilityAi;
-use TrxAddons\AiHelper\XAi;
 
 if ( ! class_exists( 'Utils' ) ) {
 
@@ -239,24 +238,6 @@ if ( ! class_exists( 'Utils' ) ) {
 							$answer['error'] = __( 'Error! Unknown response from the API. Maybe the API server is not available right now.', 'trx_addons' );
 						}
 					}
-
-				// XAi API response
-				} else if ( self::is_x_ai_model( $model ) ) {
-					if ( ! empty( $response['data'] ) && ! empty( $response['data'][0]['url'] ) ) {
-						$answer['data']['images'] = $response['data'];
-						// Save a file name and url to the cache
-						foreach( $response['data'] as $image_data ) {
-							if ( ! empty( $image_data['url'] ) ) {
-								self::save_data_to_cache( trx_addons_get_file_name( $image_data['url'], false ), $image_data['url'] );
-							}
-						}
-					} else {
-						if ( ! empty( $response['error']['message'] ) ) {
-							$answer['error'] = ! empty( $response['error']['message'] ) ? $response['error']['message'] : (string)$response['error'];
-						} else {
-							$answer['error'] = __( 'Error! Unknown response from the API. Maybe the API server is not available right now.', 'trx_addons' );
-						}
-					}
 				}
 
 			} else if ( $mode == 'music' || $mode == 'audio' ) {
@@ -400,8 +381,6 @@ if ( ! class_exists( 'Utils' ) ) {
 					$max_tokens = max( $max_tokens, FlowiseAi::get_max_tokens( '*' ) );
 				} else if ( $api == 'google-ai' && (int)$enable > 0 ) {
 					$max_tokens = max( $max_tokens, GoogleAi::get_max_tokens( '*' ) );
-				} else if ( $api == 'x-ai' && (int)$enable > 0 ) {
-					$max_tokens = max( $max_tokens, XAi::get_max_tokens( '*' ) );
 				}
 			}
 			return apply_filters( 'trx_addons_filter_ai_helper_max_tokens', $max_tokens > 0 ? $max_tokens : self::get_default_max_tokens(), $sc );
@@ -426,8 +405,6 @@ if ( ! class_exists( 'Utils' ) ) {
 				return OpenAiAssistants::instance();
 			} else if ( self::is_trx_ai_assistants_model( $model ) ) {
 				return TrxAiAssistants::instance();
-			} else if ( self::is_x_ai_model( $model ) ) {
-				return XAi::instance();
 			} else {
 				return OpenAi::instance();
 			}
@@ -445,8 +422,6 @@ if ( ! class_exists( 'Utils' ) ) {
 				return StableDiffusion::instance();
 			} else if ( self::is_stability_ai_model( $model ) ) {
 				return StabilityAi::instance();
-			} else if ( self::is_x_ai_model( $model ) ) {
-				return XAi::instance();
 			} else {
 				return OpenAi::instance();
 			}
@@ -672,8 +647,6 @@ if ( ! class_exists( 'Utils' ) ) {
 			} else if ( $type == 'archive' ) {
 				$extensions = $types['archive'];
 			} else if ( Utils::is_openai_model( $model ) ) {
-				$extensions = array_merge( $types['image'], $types['audio'] );
-			} else if ( Utils::is_x_ai_model( $model ) ) {
 				$extensions = array_merge( $types['image'], $types['audio'] );
 			} else {
 				$extensions = array_merge( $types['image'], $types['audio'], $types['video'],
@@ -910,17 +883,6 @@ if ( ! class_exists( 'Utils' ) ) {
 		 */
 		static function is_openai_dall_e_3_model( $model ) {
 			return strpos( $model, 'openai/' ) !== false && strpos( $model, 'dall-e-3' ) !== false;
-		}
-
-		/**
-		 * Check if the model is a XAi model
-		 * 
-		 * @param string $model  Model name
-		 * 
-		 * @return bool  True if the model is a XAi model
-		 */
-		static function is_x_ai_model( $model ) {
-			return strpos( $model, 'x-ai/' ) !== false;
 		}
 
 		/**

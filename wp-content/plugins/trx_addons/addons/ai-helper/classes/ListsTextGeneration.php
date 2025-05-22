@@ -22,7 +22,6 @@ if ( ! trait_exists( 'ListsTextGeneration' ) ) {
 				'openai-assistants' => esc_html__( 'Open AI Assistants', 'trx_addons' ),
 				'flowise-ai' => esc_html__( 'Flowise AI', 'trx_addons' ),
 				'google-ai' => esc_html__( 'Google AI (Gemini)', 'trx_addons' ),
-				'x-ai' => esc_html__( 'X AI', 'trx_addons' ),
 			) );
 		}
 
@@ -87,13 +86,6 @@ if ( ! trait_exists( 'ListsTextGeneration' ) ) {
 					$google_models = self::get_google_ai_chat_models();
 					foreach ( $google_models as $k => $v ) {
 						$models[ 'google-ai/' . $k ] = $v['title'];
-					}
-				}
-				// X AI
-				if ( $api == 'x-ai' && (int)$enable > 0 ) {
-					$x_ai_models = self::get_x_ai_chat_models();
-					foreach ( $x_ai_models as $k => $v ) {
-						$models[ 'x-ai/' . $k ] = $v['title'];
 					}
 				}
 			}
@@ -591,122 +583,6 @@ if ( ! trait_exists( 'ListsTextGeneration' ) ) {
 		 */
 		static function get_list_google_ai_chat_models() {
 			return apply_filters( 'trx_addons_filter_ai_helper_list_google_ai_models', trx_addons_array_from_list( self::get_google_ai_chat_models() ) );
-		}
-
-
-
-		/* X AI API
-		--------------------------------------------------------------------------------------- */
-
-		/**
-		 * Return a list of chat models for X AI with max tokens for each model
-		 * 
-		 * @access public
-		 * @static
-		 * 
-		 * @return array  	  The list of chat models for X AI
-		 */
-		static function get_default_x_ai_chat_models() {
-			return apply_filters( 'trx_addons_filter_ai_helper_ai_models', array(
-				'grok-3-latest' => array(
-					'id' => 'grok-3-latest',
-					'title' => esc_html__( 'Grok 3', 'trx_addons' ),
-					'max_tokens' => 16000,
-					'output_tokens' => 4000,
-				),
-				'grok-3-fast-latest' => array(
-					'id' => 'grok-3-fast-latest',
-					'title' => esc_html__( 'Grok 3 Fast', 'trx_addons' ),
-					'max_tokens' => 16000,
-					'output_tokens' => 4000,
-				),
-				'grok-3-mini-latest' => array(
-					'id' => 'grok-3-mini-latest',
-					'title' => esc_html__( 'Grok 3 Mini', 'trx_addons' ),
-					'max_tokens' => 16000,
-					'output_tokens' => 4000,
-				),
-				'grok-3-mini-fast-latest' => array(
-					'id' => 'grok-3-mini-fast-latest',
-					'title' => esc_html__( 'Grok 3 Mini Fast', 'trx_addons' ),
-					'max_tokens' => 16000,
-					'output_tokens' => 4000,
-				),
-				'grok-2-vision-latest' => array(
-					'id' => 'grok-2-vision-latest',
-					'title' => esc_html__( 'Grok 2 Vision', 'trx_addons' ),
-					'max_tokens' => 16000,
-					'output_tokens' => 4000,
-				),
-			) );
-		}
-
-		/**
-		 * Return a list of chat models for X AI
-		 * 
-		 * @access public
-		 * @static
-		 * 
-		 * @return array  	  The list of chat models for OpenAi
-		 */
-		static function get_x_ai_chat_models() {
-			$models = array();
-			$token = trx_addons_get_option( 'ai_helper_token_x_ai', '' );
-			if ( ! empty( $token ) ) {
-				$autoload = trx_addons_get_option( 'ai_helper_autoload_chat_models_x_ai', 0 );
-				if ( (int)$autoload > 0 ) {
-					$models = get_transient( "trx_addons_ai_helper_list_chat_models_x_ai" );
-					if ( ! is_array( $models ) || count( $models ) == 0 ) {
-						$response = XAi::instance()->list_models( array( 'type' => 'text' ) );
-						if ( ! empty( $response['models'] ) && is_array( $response['models'] ) && count( $response['models'] ) > 0 ) {
-							$new_models = array();
-							foreach ( $response['models'] as $v ) {
-								if ( ! empty( $v['id'] )
-									&& ! empty( $v['input_modalities'] )
-									&& in_array( 'text', $v['input_modalities'] )
-								) {
-									$new_models[ $v['id'] ] = array(
-										'id' => $v['id'],
-										'title' => ucfirst( str_replace( '-', ' ', $v['id'] ) ),
-										'max_tokens' => 16000,
-										'output_tokens' => 4000,
-									);
-								}
-							}
-							$models = $new_models;
-						} else {
-							$models = self::get_default_x_ai_chat_models();
-						}
-						set_transient( "trx_addons_ai_helper_list_chat_models_x_ai", $models, 7 * 24 * 60 * 60 );	// 7 days
-					}
-				} else {
-					$models = trx_addons_get_option( 'ai_helper_chat_models_x_ai', array() );
-					if ( empty( $models ) || ! is_array( $models ) || empty( $models[0]['id'] ) ) {
-						$models = self::get_default_x_ai_chat_models();
-					} else {
-						$new_models = array();
-						foreach ( $models as $v ) {
-							if ( ! empty( $v['id'] ) ) {
-								$new_models[ $v['id'] ] = $v;
-							}
-						}
-						$models = $new_models;
-					}
-				}
-			}
-			return $models;
-		}
-
-		/**
-		 * Return a list of chat models for X AI
-		 * 
-		 * @access public
-		 * @static
-		 * 
-		 * @return array  	  The list of chat models for X AI
-		 */
-		static function get_list_x_ai_chat_models() {
-			return apply_filters( 'trx_addons_filter_ai_helper_list_ai_models', trx_addons_array_from_list( self::get_x_ai_chat_models() ) );
 		}
 
 	}
