@@ -29,6 +29,8 @@ class Admin_Config extends Rest_Base {
 
 		$config = $this->get_site_parts( $config );
 
+		$config = $this->get_resources( $config );
+
 		$config = apply_filters( 'hello-plus-theme/rest/admin-config', $config );
 
 		$config['config'] = [
@@ -37,6 +39,58 @@ class Admin_Config extends Rest_Base {
 		];
 
 		return rest_ensure_response( [ 'config' => $config ] );
+	}
+
+	public function get_resources( array $config ) {
+		$config['resourcesData'] = [
+			'community' => [
+				[
+					'title'  => __( 'Facebook', 'hello-biz' ),
+					'link'   => 'https://www.facebook.com/groups/Elementors/',
+					'icon'   => 'BrandFacebookIcon',
+					'target' => '_blank',
+				],
+				[
+					'title'  => __( 'YouTube', 'hello-biz' ),
+					'link'   => 'https://www.youtube.com/@Elementor',
+					'icon'   => 'BrandYoutubeIcon',
+					'target' => '_blank',
+				],
+				[
+					'title'  => __( 'Discord', 'hello-biz' ),
+					'link'   => 'https://discord.com/servers/elementor-official-community-1164474724626206720',
+					'target' => '_blank',
+				],
+				[
+					'title'  => __( 'Rate Us', 'hello-biz' ),
+					'link'   => 'https://wordpress.org/support/theme/hello-biz/reviews/#new-post',
+					'icon'   => 'StarIcon',
+					'target' => '_blank',
+				],
+			],
+			'resources' => [
+				[
+					'title'  => __( 'Help Center', 'hello-biz' ),
+					'link'   => 'https://go.elementor.com/hello-biz-help/',
+					'icon'   => 'HelpIcon',
+					'target' => '_blank',
+				],
+				[
+					'title'  => __( 'Blog', 'hello-biz' ),
+					'link'   => 'https://go.elementor.com/hello-biz-blog/',
+					'icon'   => 'SpeakerphoneIcon',
+					'target' => '_blank',
+				],
+				[
+					'title'  => __( 'Platinum Support', 'hello-biz' ),
+					'link'   => 'https://go.elementor.com/hello-biz-platinumcare',
+					'icon'   => 'BrandElementorIcon',
+					'target' => '_blank',
+				],
+			],
+		];
+
+		return $config;
 	}
 
 	public function get_site_parts( array $config ): array {
@@ -64,6 +118,7 @@ class Admin_Config extends Rest_Base {
 				$site_pages[] = [
 					'title' => get_the_title(),
 					'link'  => get_edit_post_link( get_the_ID(), 'admin' ) . $edit_with_elementor,
+					'icon'  => 'PagesIcon',
 				];
 			}
 		}
@@ -72,6 +127,7 @@ class Admin_Config extends Rest_Base {
 			[
 				'title' => __( 'Add New Page', 'hello-biz' ),
 				'link'  => self_admin_url( 'post-new.php?post_type=page' ),
+				'icon'  => 'PageTypeIcon',
 			],
 			[
 				'title' => __( 'Settings', 'hello-biz' ),
@@ -79,26 +135,89 @@ class Admin_Config extends Rest_Base {
 			],
 		];
 
-		$config['siteParts'] = [
-			'siteParts' => [
+		$common_parts = [
+			array_merge(
 				[
-					'title' => __( 'Header', 'hello-biz' ),
-					'link' => self_admin_url( 'customize.php?autofocus[section]=hello-biz-options' ),
+					'id' => 'theme-builder',
+					'title' => __( 'Theme Builder', 'hello-biz' ),
+					'icon' => 'ThemeBuilderIcon',
 				],
+				Utils::get_theme_builder_options()
+			),
+		];
+
+		$customizer_header_footer_url = self_admin_url( 'customize.php?autofocus[section]=hello-biz-options' );
+
+		$header_part = [
+			'id'           => 'header',
+			'title'        => __( 'Header', 'hello-biz' ),
+			'link'         => $customizer_header_footer_url,
+			'icon'         => 'HeaderTemplateIcon',
+			'showSublinks' => true,
+			'sublinks'     => [],
+		];
+		$footer_part = [
+			'id'           => 'footer',
+			'title'        => __( 'Footer', 'hello-biz' ),
+			'link'         => $customizer_header_footer_url,
+			'icon'         => 'FooterTemplateIcon',
+			'showSublinks' => true,
+			'sublinks'     => [],
+		];
+
+		if ( Utils::is_elementor_active() ) {
+			if ( Utils::has_pro() ) {
+				$header_part = $this->update_pro_part( $header_part, 'header' );
+				$footer_part = $this->update_pro_part( $footer_part, 'footer' );
+			}
+		}
+
+		$site_parts = [
+			'siteParts' => array_merge(
 				[
-					'title' => __( 'Footer', 'hello-biz' ),
-					'link' => self_admin_url( 'customize.php?autofocus[section]=hello-biz-options' ),
+					$header_part,
+					$footer_part,
 				],
-			],
+				$common_parts
+			),
 			'sitePages' => $site_pages,
 			'general'   => $general,
 		];
 
+		$config['siteParts'] = apply_filters( 'hello-plus-theme/template-parts', $site_parts );
+
 		return $this->get_quicklinks( $config );
 	}
 
+	private function update_pro_part( array $part, string $location ): array {
+		$theme_builder_module = \ElementorPro\Modules\ThemeBuilder\Module::instance();
+		$conditions_manager   = $theme_builder_module->get_conditions_manager();
+
+		$documents    = $conditions_manager->get_documents_for_location( $location );
+		$add_new_link = \Elementor\Plugin::instance()->app->get_base_url() . '#/site-editor/templates/' . $location;
+		if ( ! empty( $documents ) ) {
+			$first_document_id    = array_key_first( $documents );
+			$part['showSublinks'] = true;
+			$part['sublinks']     = [
+				[
+					'title' => __( 'Edit', 'hello-biz' ),
+					'link'  => get_edit_post_link( $first_document_id, 'admin' ) . '&action=elementor',
+				],
+				[
+					'title' => __( 'Add New', 'hello-biz' ),
+					'link'  => $add_new_link,
+				],
+			];
+		} else {
+			$part['link']         = $add_new_link;
+			$part['showSublinks'] = false;
+		}
+
+		return $part;
+	}
+
 	public function get_open_homepage_with_tab( $action, $customizer_fallback_args = [] ): string {
-		if ( Utils::is_elementor_active() ) {
+		if ( Utils::is_elementor_active() && method_exists( Page::class, 'get_site_settings_url_config' ) ) {
 			return Page::get_site_settings_url_config( $action )['url'];
 		}
 
@@ -108,12 +227,19 @@ class Admin_Config extends Rest_Base {
 	public function get_quicklinks( $config ): array {
 		$config['quickLinks'] = [
 			'site_name' => [
-				'title' => __( 'Site name', 'hello-biz' ),
+				'title' => __( 'Site Name', 'hello-biz' ),
 				'link'  => $this->get_open_homepage_with_tab( 'settings-site-identity', [ 'autofocus[section]' => 'title_tagline' ] ),
+				'icon'  => 'TextIcon',
 			],
 			'site_logo' => [
 				'title' => __( 'Site Logo', 'hello-biz' ),
 				'link'  => $this->get_open_homepage_with_tab( 'settings-site-identity', [ 'autofocus[section]' => 'title_tagline' ] ),
+				'icon'  => 'PhotoIcon',
+			],
+			'site_favicon' => [
+				'title' => __( 'Site Favicon', 'hello-biz' ),
+				'link'  => $this->get_open_homepage_with_tab( 'settings-site-identity', [ 'autofocus[section]' => 'title_tagline' ] ),
+				'icon'  => 'AppsIcon',
 			],
 		];
 
@@ -121,11 +247,13 @@ class Admin_Config extends Rest_Base {
 			$config['quickLinks']['site_colors'] = [
 				'title' => __( 'Site Colors', 'hello-biz' ),
 				'link'  => $this->get_open_homepage_with_tab( 'global-colors' ),
+				'icon'  => 'BrushIcon',
 			];
 
 			$config['quickLinks']['site_fonts'] = [
 				'title' => __( 'Site Fonts', 'hello-biz' ),
 				'link'  => $this->get_open_homepage_with_tab( 'global-typography' ),
+				'icon'  => 'UnderlineIcon',
 			];
 		}
 
@@ -135,15 +263,19 @@ class Admin_Config extends Rest_Base {
 	public function get_welcome_box_config( array $config ): array {
 		$is_elementor_active  = Utils::is_elementor_active();
 		$is_hello_plus_active = Utils::is_hello_plus_active();
+		$cta_text             = __( 'Begin Setup', 'hello-biz' );
 
 		if ( ! $is_hello_plus_active ) {
 			$link = Utils::is_hello_plus_installed() ? Utils::get_hello_plus_activation_link() : 'install';
-
 			$config['welcome'] = [
 				'text'    => __( 'To get access to the full suite of features, including theme kits, header and footer templates, and more widgets, click “Begin setup” and start your web creator journey.', 'hello-biz' ),
+				'image'   => [
+					'src' => HELLO_BIZ_IMAGES_URL . 'banner-image.png',
+					'alt' => $cta_text,
+				],
 				'buttons' => [
 					[
-						'title'   => __( 'Begin Setup', 'hello-biz' ),
+						'title'   => $cta_text,
 						'variant' => 'contained',
 						'link'    => $link,
 						'color'   => 'primary',
@@ -157,9 +289,10 @@ class Admin_Config extends Rest_Base {
 		if ( ! $is_elementor_active || ! Utils::is_hello_plus_setup_wizard_done() ) {
 			$config['welcome'] = [
 				'text'    => __( 'To get access to the full suite of features, including theme kits, header and footer templates, and more widgets, click “Begin setup” and start your web creator journey.', 'hello-biz' ),
+				'image'   => HELLO_BIZ_IMAGES_URL . 'banner-image.png',
 				'buttons' => [
 					[
-						'title'   => __( 'Begin Setup', 'hello-biz' ),
+						'title'   => $cta_text,
 						'variant' => 'contained',
 						'link'    => self_admin_url( 'admin.php?page=hello-plus-setup-wizard' ),
 						'color'   => 'primary',
@@ -171,7 +304,8 @@ class Admin_Config extends Rest_Base {
 		}
 
 		$config['welcome'] = [
-			'text'    => __( 'Here you’ll find quick access to key site settings. Customizing and managing your site is a breeze with Hello Biz.', 'hello-biz' ),
+			'text'    => __( 'Here you\'ll find links to some site settings that will help you set up and get running as soon as possible. With Hello Biz you\'ll find creating your website is a breeze.', 'hello-biz' ),
+			'image'   => HELLO_BIZ_IMAGES_URL . 'banner-image.png',
 			'buttons' => [
 				[
 					'title'   => __( 'Edit home page', 'hello-biz' ),

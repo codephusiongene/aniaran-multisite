@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'HELLO_BIZ_ELEMENTOR_VERSION', '1.1.0' );
+define( 'HELLO_BIZ_ELEMENTOR_VERSION', '1.1.1' );
 define( 'EHP_THEME_SLUG', 'hello-biz' );
 
 define( 'HELLO_BIZ_PATH', get_template_directory() );
 define( 'HELLO_BIZ_URL', get_template_directory_uri() );
-define( 'HELLO_BIZ_ASSETS_PATH', HELLO_BIZ_PATH . '/build/' );
-define( 'HELLO_BIZ_ASSETS_URL', HELLO_BIZ_URL . '/build/' );
+define( 'HELLO_BIZ_ASSETS_PATH', HELLO_BIZ_PATH . '/assets/' );
+define( 'HELLO_BIZ_ASSETS_URL', HELLO_BIZ_URL . '/assets/' );
 define( 'HELLO_BIZ_SCRIPTS_PATH', HELLO_BIZ_ASSETS_PATH . 'js/' );
 define( 'HELLO_BIZ_SCRIPTS_URL', HELLO_BIZ_ASSETS_URL . 'js/' );
 define( 'HELLO_BIZ_STYLE_PATH', HELLO_BIZ_ASSETS_PATH . 'css/' );

@@ -2,6 +2,8 @@
 
 namespace HelloBiz\Includes;
 
+use Elementor\App\App;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,6 +19,10 @@ class Utils {
 
 	public static function elementor(): \Elementor\Plugin {
 		return \Elementor\Plugin::$instance;
+	}
+
+	public static function has_pro(): bool {
+		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
 	public static function is_elementor_active(): bool {
@@ -72,5 +78,32 @@ class Utils {
 		);
 
 		return add_query_arg( '_wpnonce', wp_create_nonce( $action . '_' . $plugin_slug ), $url );
+	}
+
+	public static function get_theme_builder_options(): array {
+		$url = 'https://go.elementor.com/hello-biz-builder';
+		$target = '_blank';
+
+		if ( ! class_exists( 'Elementor\App\App' ) ) {
+			return [
+				'link' => $url,
+				'target' => $target,
+			];
+		}
+
+		if ( self::has_pro() ) {
+			$url = admin_url( 'admin.php?page=' . App::PAGE_ID . '&ver=' . ELEMENTOR_VERSION ) . '#site-editor';
+			$target = '_self';
+		}
+
+		if ( self::is_elementor_active() ) {
+			$url = admin_url( 'admin.php?page=' . App::PAGE_ID . '&ver=' . ELEMENTOR_VERSION ) . '#site-editor/promotion';
+			$target = '_self';
+		}
+
+		return [
+			'link' => $url,
+			'target' => $target,
+		];
 	}
 }

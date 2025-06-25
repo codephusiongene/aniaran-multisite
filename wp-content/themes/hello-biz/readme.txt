@@ -2,9 +2,9 @@
 
 Contributors: elementor, KingYes, ariel.k
 Requires at least: 6.0
-Tested up to: 6.5
-Stable tag: 1.1.0
-Version: 1.1.0
+Tested up to: 6.8
+Stable tag: 1.1.1
+Version: 1.1.1
 Requires PHP: 7.4
 License: GNU General Public License v3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -88,6 +88,10 @@ License: [Creative Commons CC0 license](https://creativecommons.org/publicdomain
 >Report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team validates, triages, and handles vulnerabilities. [Report a security vulnerability](https://patchstack.com/database/wordpress/theme/hello-biz/vdp)
 
 == Changelog ==
+
+= 1.1.1 - 2025-06-15 =
+* Fix: Empty Setting page when admin language is not English
+* Tweak: Home page links and styling
 
 = 1.1.0 - 2025-04-27 =
 * New: 404 page styling

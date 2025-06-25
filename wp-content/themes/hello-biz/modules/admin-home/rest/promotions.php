@@ -37,7 +37,23 @@ class Promotions extends Rest_Base {
 			];
 		}
 
-		if (
+		if ( ! defined( 'SEND_VERSION' ) ) {
+			$action_links_data[] = [
+				'type' => 'go-send',
+				'image' => HELLO_BIZ_IMAGES_URL . 'send-logo.gif',
+				'backgroundColor' => '#EFEFFF',
+				'url' => 'https://go.elementor.com/Hello_Biz_send',
+				'alt' => __( 'Send', 'hello-biz' ),
+				'title' => '',
+				'messages' => [
+					__( 'Connect any website to automated Email & SMS workflows in a click with Send.', 'hello-biz' ),
+				],
+				'button' => __( 'Install', 'hello-biz' ),
+				'buttonBgColor' => '#524CFF',
+				'width' => 72,
+				'height' => 'auto',
+			];
+		} elseif (
 			! defined( 'ELEMENTOR_AI_VERSION' ) &&
 			Utils::is_elementor_installed()
 		) {
