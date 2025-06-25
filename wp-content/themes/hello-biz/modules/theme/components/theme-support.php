@@ -40,7 +40,6 @@ class Theme_Support {
 					'caption',
 					'script',
 					'style',
-					'navigation-widgets',
 				]
 			);
 			add_theme_support(

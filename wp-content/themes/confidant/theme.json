@@ -19,7 +19,7 @@
                 {
                     "slug": "bg-color",
                     "name": "Background color",
-                    "color": "#ffffff"
+                    "color": "#F2F7FE"
                 },
                 {
                     "slug": "bd-color",
@@ -70,7 +70,7 @@
             "duotone": [
                 {
                     "colors": [
-                        "#ffffff",
+                        "#F2F7FE",
                         "#696F75"
                     ],
                     "slug": "bg-and-text",
@@ -78,7 +78,7 @@
                 },
                 {
                     "colors": [
-                        "#ffffff",
+                        "#F2F7FE",
                         "#0D315B"
                     ],
                     "slug": "bg-and-dark",
@@ -86,7 +86,7 @@
                 },
                 {
                     "colors": [
-                        "#ffffff",
+                        "#F2F7FE",
                         "#EF5938"
                     ],
                     "slug": "bg-and-link",
@@ -116,14 +116,19 @@
                     "slug": "p-font"
                 },
                 {
-                    "fontFamily": "inherit",
-                    "name": "inherit",
+                    "fontFamily": "",
+                    "name": "",
                     "slug": "post-font"
                 },
                 {
                     "fontFamily": "halyard-display,sans-serif",
                     "name": "halyard-display,sans-serif",
                     "slug": "h1-font"
+                },
+                {
+                    "fontFamily": "inherit",
+                    "name": "inherit",
+                    "slug": "input-font"
                 }
             ]
         },
