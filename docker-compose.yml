@@ -3,7 +3,7 @@ services:
   wordpress:
     image: wordpress:6.5
     ports:
-      - "80:80"
+      - "8010:80"
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wpuser
