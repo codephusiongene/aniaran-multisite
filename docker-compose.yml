@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:80"
     environment:
-      WORDPESS_DB_HOST: db
+      WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wpuser
       WORDPRESS_DB_PASSWORD: wppassword
       WORDPRESS_DB_NAME: wpdb
